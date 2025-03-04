@@ -1,6 +1,7 @@
 
 using System.Text.Json.Serialization;
 using ChildGrowth.API.Constants;
+using ChildGrowth.API.Extensions;
 using ChildGrowth.API.Middleware;
 using NLog.Web;
 
@@ -22,6 +23,12 @@ try
     {
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+    builder.Services.AddDatabase();
+    builder.Services.AddUnitOfWork();
+    builder.Services.AddServices(builder.Configuration);
+    builder.Services.AddJwtValidation();
+    builder.Services.AddConfigSwagger();
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 

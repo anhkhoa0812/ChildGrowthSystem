@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChildGrowth.Repository.Implement;
 
-public class UnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
+public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbContext
 {
     public TContext Context { get; }
     private Dictionary<Type, object> _repositories;

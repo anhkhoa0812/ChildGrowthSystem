@@ -1,4 +1,6 @@
 using System.Text;
+using ChildGrowth.API.Services.Implement;
+using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
 using ChildGrowth.Repository.Implement;
 using ChildGrowth.Repository.Interfaces;
@@ -14,7 +16,7 @@ public static class DependencyServices
 {
     public static IServiceCollection AddUnitOfWork(this IServiceCollection services)
     {
-        services.AddScoped<IUnitOfWork, UnitOfWork<ChildGrowDBContext>>();
+        services.AddScoped<IUnitOfWork<ChildGrowDBContext>, UnitOfWork<ChildGrowDBContext>>();
         return services;
     }
     
@@ -28,12 +30,13 @@ public static class DependencyServices
 
     private static string CreateConnectionString(IConfiguration configuration)
     {
-        var connectionString = configuration.GetValue<string>("ConnectionStrings:PosSystemDatabase");
+        var connectionString = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
         return connectionString;
     }
 
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddScoped<IConsultationService, ConsultationService>();
         return services;
     }
 

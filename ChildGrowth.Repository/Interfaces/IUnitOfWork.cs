@@ -2,17 +2,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChildGrowth.Repository.Interfaces;
 
-public interface IUnitOfWork
+public interface IUnitOfWork : IGenericRepositoryFactory, IDisposable
 {
-    public interface IUnitOfWork : IGenericRepositoryFactory, IDisposable
-    {
-        int Commit();
+    int Commit();
 
-        Task<int> CommitAsync();
-    }
+    Task<int> CommitAsync();
+}
 
-    public interface IUnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
-    {
-        TContext Context { get; }
-    }
+public interface IUnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
+{
+    TContext Context { get; }
 }
