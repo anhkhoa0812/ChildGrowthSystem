@@ -20,4 +20,10 @@ public static class ApiEndPointConstant
         public const string DoctorEndPoint = ApiEndpoint + "/doctors";
         public const string ConsultationDoctor = DoctorEndPoint + "/{doctorId}/consultations";
     }
+
+    public static class User
+    {
+        public const string UserEndPoint = ApiEndpoint + "/users";
+        public const string SignUp = UserEndPoint + "/signup";
+    }
 }

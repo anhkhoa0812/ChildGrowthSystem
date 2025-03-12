@@ -390,9 +390,6 @@ public partial class ChildGrowDBContext : DbContext
             entity.Property(e => e.PlanId).HasColumnName("PlanID");
             entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(20);
-            entity.Property(e => e.TransactionId)
-                .HasMaxLength(100)
-                .HasColumnName("TransactionID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.Plan).WithMany(p => p.UserMemberships)
