@@ -16,7 +16,7 @@ public class JwtUtil
     {
         JwtSecurityTokenHandler jwtHandler = new JwtSecurityTokenHandler();
         SymmetricSecurityKey secrectKey =
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ChildGrowthSystem"));
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("PRN231SE1731095AESIEUNHAN12345678PRN231SE1731095AESIEUNHAN12345678PRN231SE1731095AESIEUNHAN12345678"));
         var credentials = new SigningCredentials(secrectKey, SecurityAlgorithms.HmacSha256Signature);
         List<Claim> claims = new List<Claim>()
         {
