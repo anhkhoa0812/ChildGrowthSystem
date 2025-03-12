@@ -1,4 +1,5 @@
 using AutoMapper;
+using ChildGrowth.API.Payload.Response.User;
 using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.User;
 using ChildGrowth.Domain.Entities;
@@ -11,6 +12,7 @@ public class UserMapper : Profile
 {
     public UserMapper()
     {
+        CreateMap<User, UserResponse>();
         CreateMap<SignUpRequest, User>()
             .ForMember(dest => dest.UserId, opt => opt.Ignore())
             .ForMember(dest => dest.UserType, opt => opt.MapFrom(src => src.UserType.ToString()))

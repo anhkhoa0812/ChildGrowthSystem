@@ -9,6 +9,7 @@ using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Utils;
 using ChildGrowth.Domain.Context;
 using ChildGrowth.Domain.Entities;
+using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
@@ -22,6 +23,15 @@ public class UserService : BaseService<UserService>, IUserService
     public UserService(IUnitOfWork<ChildGrowDBContext> unitOfWork, ILogger<UserService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration config) : base(unitOfWork, logger, mapper, httpContextAccessor)
     {
         _config = config;
+    }
+    public async Task<IPaginate<UserResponse>> GetUserAsync(int page, int size)
+    {
+        var users = await _unitOfWork.GetRepository<User>().GetPagingListAsync(
+            page: page,
+            size: size,
+            orderBy: x => x.OrderByDescending(x => x.CreatedAt)
+        );
+        return _mapper.Map<IPaginate<UserResponse>>(users);
     }
 
     public async Task<SignInResponse> SignUp(SignUpRequest request)
