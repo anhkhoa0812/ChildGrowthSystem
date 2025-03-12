@@ -24,7 +24,7 @@ public class UserService : BaseService<UserService>, IUserService
         _config = config;
     }
 
-    public async Task<SignUpResponse> SignUp(SignUpRequest request)
+    public async Task<SignInResponse> SignUp(SignUpRequest request)
     {
         try
         {
@@ -37,9 +37,35 @@ public class UserService : BaseService<UserService>, IUserService
             user.Password = PasswordUtil.HashPassword(request.Password);
             await _unitOfWork.GetRepository<User>().InsertAsync(user);
             await _unitOfWork.CommitAsync();
-            return new SignUpResponse
+            return new SignInResponse()
             {
                 AccessToken = GetAccessToken(user),
+            };
+        } catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<SignInResponse> SignIn(SignInRequest request)
+    {
+        try
+        {
+            var isUserExist = IsUserExist(request.Username);
+            if (!isUserExist.Result)
+            {
+                throw new Exception("User not found");
+            }
+            var user = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(predicate: u => u.Username == request.Username && u.Password == PasswordUtil.HashPassword(request.Password));
+            if (user == null)
+            {
+                throw new Exception("Invalid username or password");
+            }
+            var accessToken = GetAccessToken(user);
+            return new SignInResponse()
+            {
+                AccessToken = accessToken,
             };
         } catch (Exception e)
         {

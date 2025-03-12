@@ -5,5 +5,6 @@ namespace ChildGrowth.API.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<SignUpResponse> SignUp(SignUpRequest request);
+    Task<SignInResponse> SignUp(SignUpRequest request);
+    Task<SignInResponse> SignIn(SignInRequest request);
 }

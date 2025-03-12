@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChildGrowth.API.Controller;
 
-[Route(ApiEndPointConstant.Consultation.ConsultationEndpoint)]
+[Route("api/[controller]")]
 [ApiController]
 public class UserController : BaseController<UserController>
 {
@@ -17,10 +17,18 @@ public class UserController : BaseController<UserController>
     }
     
     [HttpPost(ApiEndPointConstant.User.SignUp)]
-    [ProducesResponseType(typeof(SignUpResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SignInResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> SignUp([FromBody] SignUpRequest request)
     {
         var response = await _userService.SignUp(request);
         return Ok(response);
     }
+    
+    [HttpPost(ApiEndPointConstant.User.SignIn)]
+    [ProducesResponseType(typeof(SignInResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
+    { var response = await _userService.SignIn(request);
+            return Ok(response);
+    }
+    
 }

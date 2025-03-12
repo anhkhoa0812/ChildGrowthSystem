@@ -1,6 +1,6 @@
 namespace ChildGrowth.API.Payload.Response.User;
 
-public class SignUpResponse
+public class SignInResponse
 {
     public string AccessToken { get; set; }
 }
