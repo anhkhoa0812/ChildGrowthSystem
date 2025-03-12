@@ -60,7 +60,7 @@ public static class DependencyServices
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes("ChildGrowthSystem"))
+                        Encoding.UTF8.GetBytes("PRN231SE1731095AESIEUNHAN12345678PRN231SE1731095AESIEUNHAN12345678PRN231SE1731095AESIEUNHAN12345678"))
             };
         });
         return services;
