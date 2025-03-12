@@ -23,6 +23,15 @@ public class UserService : BaseService<UserService>, IUserService
     {
         _config = config;
     }
+    public async Task<IPaginate<UserResponse>> GetUserAsync(int page, int size)
+    {
+        var users = await _unitOfWork.GetRepository<User>().GetPagingListAsync(
+            page: page,
+            size: size,
+            orderBy: x => x.OrderByDescending(x => x.CreatedAt)
+        );
+        return _mapper.Map<IPaginate<UserResponse>>(users);
+    }
 
     public async Task<SignUpResponse> SignUp(SignUpRequest request)
     {
