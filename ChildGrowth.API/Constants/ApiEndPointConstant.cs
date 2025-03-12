@@ -34,4 +34,9 @@ public static class ApiEndPointConstant
         public const string SignUp = UserEndPoint + "/signup";
         public const string SignIn = UserEndPoint + "/signin";
     }
+    
+    public static class MembershipPlan
+    {
+        public const string MembershipPlanEndPoint = ApiEndpoint + "/membership-plans";
+    }
 }
