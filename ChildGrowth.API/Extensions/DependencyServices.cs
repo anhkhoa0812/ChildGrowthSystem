@@ -40,6 +40,7 @@ public static class DependencyServices
         services.AddScoped<IGrowthRecordService, GrowthRecordService>();
         services.AddScoped<IChildService, ChildService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IMembershipPlanService, MembershipPlanService>();
         return services;
     }
 
