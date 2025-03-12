@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Pos_System.API.Utils;
+namespace ChildGrowth.API.Utils;
 
 public static class EnumUtil
 {
