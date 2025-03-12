@@ -2,8 +2,10 @@
 using System.Text.Json.Serialization;
 using ChildGrowth.API.Constants;
 using ChildGrowth.API.Extensions;
+using ChildGrowth.API.Logger;
 using ChildGrowth.API.Middleware;
 using NLog.Web;
+using Serilog;
 
 var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"))
     .GetCurrentClassLogger();
@@ -11,7 +13,7 @@ var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurren
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
+    builder.Host.UseSerilog(SeriLogger.Configure);
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
     builder.Services.AddCors(options =>
