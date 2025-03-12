@@ -38,5 +38,9 @@ public static class ApiEndPointConstant
     public static class MembershipPlan
     {
         public const string MembershipPlanEndPoint = ApiEndpoint + "/membership-plans";
+        public const string GetMembershipPlanById = MembershipPlanEndPoint + "/{id}";
+        public const string CreateMembershipPlan = MembershipPlanEndPoint;
+        public const string UpdateMembershipPlan = MembershipPlanEndPoint;
+        public const string InactiveMembershipPlan = MembershipPlanEndPoint + "/{id}";
     }
 }
