@@ -21,8 +21,6 @@ public partial class UserMembership
 
     public string? PaymentMethod { get; set; }
 
-    public string? TransactionId { get; set; }
-
     public bool? AutoRenewal { get; set; }
 
     public DateTime? CreatedAt { get; set; }
