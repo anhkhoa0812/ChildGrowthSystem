@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using ChildGrowth.API.Constants;
+using ChildGrowth.API.Payload.Request.Consultation;
 using ChildGrowth.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,4 +16,20 @@ public class ConsultationController : BaseController<ConsultationController>
         _consultationService = consultationService;
     }
     
+    [HttpPost(ApiEndPointConstant.Consultation.ConsultationEndpoint)]
+    public async Task<IActionResult> CreateConsultation([FromBody] CreateConsultationRequest request)
+    {
+        var parentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var parentIdInt = int.Parse(parentId);
+        try
+        {
+            var consultation = await _consultationService.CreateConsultationAsync(parentIdInt, request);
+            return Ok(consultation);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
 }
