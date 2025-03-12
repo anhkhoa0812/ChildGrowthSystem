@@ -1,10 +1,7 @@
 using AutoMapper;
 using ChildGrowth.API.Payload.Response.User;
-using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.User;
 using ChildGrowth.Domain.Entities;
-using ChildGrowth.Domain.Paginate;
-using Pos_System.API.Utils;
 
 namespace ChildGrowth.API.Mapper;
 
