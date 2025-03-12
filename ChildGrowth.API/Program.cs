@@ -4,7 +4,6 @@ using ChildGrowth.API.Constants;
 using ChildGrowth.API.Extensions;
 using ChildGrowth.API.Middleware;
 using NLog.Web;
-using Serilog;
 
 var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"))
     .GetCurrentClassLogger();
