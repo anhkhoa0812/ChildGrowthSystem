@@ -20,4 +20,15 @@ public static class ApiEndPointConstant
         public const string DoctorEndPoint = ApiEndpoint + "/doctors";
         public const string ConsultationDoctor = DoctorEndPoint + "/{doctorId}/consultations";
     }
+
+    public static class Child
+    {
+        public const string ChildEndPoint = ApiEndpoint + "/children";
+        public const string GrowthRecordChild = ChildEndPoint + "/{childId}/growth-records";
+    }
+    
+    public static class User
+    {
+        public const string UserEndPoint = ApiEndpoint + "/user";
+    }
 }
