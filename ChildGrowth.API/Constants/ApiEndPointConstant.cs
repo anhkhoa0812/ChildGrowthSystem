@@ -32,5 +32,6 @@ public static class ApiEndPointConstant
     {
         public const string UserEndPoint = ApiEndpoint + "/users";
         public const string SignUp = UserEndPoint + "/signup";
+        public const string SignIn = UserEndPoint + "/signin";
     }
 }

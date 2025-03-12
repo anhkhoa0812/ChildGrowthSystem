@@ -8,6 +8,7 @@ namespace ChildGrowth.API.Services.Interfaces;
 
 public interface IUserService
 {
+    Task<SignInResponse> SignUp(SignUpRequest request);
+    Task<SignInResponse> SignIn(SignInRequest request);
     Task<IPaginate<UserResponse>> GetUserAsync(int page, int size);
-    Task<SignUpResponse> SignUp(SignUpRequest request);
 }
