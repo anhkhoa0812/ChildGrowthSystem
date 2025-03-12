@@ -1,4 +1,5 @@
 using AutoMapper;
+using ChildGrowth.API.Payload.Request.Consultation;
 using ChildGrowth.API.Payload.Response.Consultation;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
@@ -23,5 +24,21 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
             orderBy: x => x.OrderByDescending(x => x.RequestDate)
         );
         return _mapper.Map<IPaginate<ConsultationResponse>>(consultation);
+    }
+
+    public async Task<ConsultationResponse> CreateConsultationAsync(int parentId, CreateConsultationRequest request)
+    {
+        var consultation = new Consultation()
+        {
+            ParentId = parentId,
+            Description = request.Description,
+            RequestDate = DateTime.UtcNow,
+            Priority = "Normal",
+            ConsultationType = "1",
+            Status = "Pending"
+        };
+        await _unitOfWork.GetRepository<Consultation>().InsertAsync(consultation);
+        await _unitOfWork.CommitAsync();
+        return _mapper.Map<ConsultationResponse>(consultation);
     }
 }
