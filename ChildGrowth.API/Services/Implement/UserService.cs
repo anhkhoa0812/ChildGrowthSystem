@@ -100,6 +100,7 @@ public class UserService : BaseService<UserService>, IUserService
             , _config["Jwt:Audience"]
             , new Claim[]
             {
+                new Claim("userId", user.UserId.ToString()),
                 new(ClaimTypes.Name, user.Username),
                 new(ClaimTypes.Role, user.UserType),
             },

@@ -1,4 +1,5 @@
 using AutoMapper;
+using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Response.Children;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
@@ -20,8 +21,41 @@ public class ChildService  : BaseService<Child>, IChildService
         var children = await _unitOfWork.GetRepository<Child>().GetPagingListAsync(
             page: page,
             size: size,
-            include: c => c.Include(x => x.Consultations).Include(x => x.GrowthRecords)
+            include: c => c.Include(x => x.Consultations)
+                .Include(x => x.GrowthRecords)
         );
         return _mapper.Map<IPaginate<ChildResponse>>(children);
+    }
+
+    public async Task<ChildResponse> GetChildByIdForDoctorAsync(int doctorId, int consultationId)
+    {
+        var doctor = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
+            predicate: x => x.UserId == doctorId && x.UserType == RoleEnum.Doctor.ToString()
+        );
+        if (doctor == null)
+        {
+            throw new BadHttpRequestException("Can not find doctor");
+        }
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.DoctorId == doctorId && x.ConsultationId == consultationId,
+            include: x => x.Include(x => x.Parent)
+                .Include(x => x.Child)
+                .ThenInclude(x => x.GrowthRecords.OrderByDescending(x => x.CreatedAt))
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation");
+        }
+        
+        if (consultation.ChildId == null)
+        {
+            throw new BadHttpRequestException("Can not find child");
+        }
+        var result = _mapper.Map<ChildResponse>(consultation.Child);
+        if (consultation.Parent.MembershipStatus != "Premium")
+        {
+            result.GrowthRecords = result.GrowthRecords!.Take(1).ToList();
+        }
+        return result;
     }
 }
