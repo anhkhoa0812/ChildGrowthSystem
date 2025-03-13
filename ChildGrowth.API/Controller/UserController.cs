@@ -1,9 +1,11 @@
 using ChildGrowth.API.Constants;
+using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.User;
 using ChildGrowth.API.Payload.Response.User;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.API.Payload.Request.User;
+using ChildGrowth.API.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChildGrowth.API.Controller;
@@ -21,7 +23,8 @@ public class UserController : BaseController<UserController>
     }
     [HttpGet(ApiEndPointConstant.User.UserEndPoint)]
     [ProducesResponseType(typeof(IPaginate<UserResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetConsultationByDoctorId([FromQuery]int page = 1,[FromQuery] int size = 30)
+    [CustomAuthorize(RoleEnum.Admin)]
+    public async Task<IActionResult> GetAllUser([FromQuery]int page = 1,[FromQuery] int size = 30)
     {
         var users = await _userService.GetUserAsync(page, size);
         return Ok(users);
