@@ -2,6 +2,7 @@ using System.Text;
 using ChildGrowth.API.Services.Implement;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
+using ChildGrowth.Domain.Entities;
 using ChildGrowth.Repository.Implement;
 using ChildGrowth.Repository.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,6 +39,7 @@ public static class DependencyServices
     {
         services.AddScoped<IConsultationService, ConsultationService>();
         services.AddScoped<IGrowthRecordService, GrowthRecordService>();
+        services.AddScoped<IGrowthAlertService, GrowthAlertService>();
         services.AddScoped<IChildService, ChildService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMembershipPlanService, MembershipPlanService>();
