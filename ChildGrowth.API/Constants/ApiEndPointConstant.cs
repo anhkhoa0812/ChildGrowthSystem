@@ -26,6 +26,7 @@ public static class ApiEndPointConstant
     {
         public const string ChildEndPoint = ApiEndpoint + "/children";
         public const string GrowthRecordChild = ChildEndPoint + "/{childId}/growth-records";
+        public const string GrowthAlertChild = ChildEndPoint + "/{childId}/growth-alerts";
     }
 
     public static class User
