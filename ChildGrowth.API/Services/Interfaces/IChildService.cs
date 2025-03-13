@@ -6,4 +6,7 @@ namespace ChildGrowth.API.Services.Interfaces;
 public interface IChildService
 {
     Task<IPaginate<ChildResponse>> GetAllChildren(int page, int size);
+    
+    Task<ChildResponse> GetChildByIdForDoctorAsync(int doctorId, int consultationId);
+    
 }
