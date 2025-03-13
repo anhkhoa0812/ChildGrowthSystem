@@ -19,11 +19,28 @@ public class ConsultationController : BaseController<ConsultationController>
     [HttpPost(ApiEndPointConstant.Consultation.ConsultationEndpoint)]
     public async Task<IActionResult> CreateConsultation([FromBody] CreateConsultationRequest request)
     {
-        var parentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var parentId = User.FindFirstValue("userId");
         var parentIdInt = int.Parse(parentId);
         try
         {
             var consultation = await _consultationService.CreateConsultationAsync(parentIdInt, request);
+            return Ok(consultation);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpPut(ApiEndPointConstant.Consultation.ResponseConsultation)]
+    public async Task<IActionResult> ResponseConsultation(int id, ResponseConsultationRequest request)
+    {
+        var doctorId = User.FindFirstValue("userId");
+        var doctorIdInt = int.Parse(doctorId);
+        try
+        {
+            var consultation = await _consultationService.ResponseConsultationAsync(doctorIdInt, id, request);
             return Ok(consultation);
         }
         catch (Exception e)

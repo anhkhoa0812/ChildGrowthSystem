@@ -9,4 +9,7 @@ public interface IConsultationService
     Task<IPaginate<ConsultationResponse>> GetConsultationByDoctorIdAsync(int page, int size, int doctorId);
     
     Task<ConsultationResponse> CreateConsultationAsync(int parentId, CreateConsultationRequest request);
+    
+    Task<ConsultationResponse> ResponseConsultationAsync(int doctorId, int consultationId, ResponseConsultationRequest request);
+    
 }

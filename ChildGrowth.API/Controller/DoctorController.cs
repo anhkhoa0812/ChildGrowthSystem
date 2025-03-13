@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using ChildGrowth.API.Constants;
+using ChildGrowth.API.Payload.Response.Children;
 using ChildGrowth.API.Payload.Response.Consultation;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Paginate;
@@ -11,9 +13,11 @@ namespace ChildGrowth.API.Controller;
 public class DoctorController : BaseController<DoctorController>
 {
     private readonly IConsultationService _consultationService;
-    public DoctorController(ILogger<DoctorController> logger, IConsultationService consultationService) : base(logger)
+    private readonly IChildService _childService;
+    public DoctorController(ILogger<DoctorController> logger, IConsultationService consultationService, IChildService childService) : base(logger)
     {
         _consultationService = consultationService;
+        _childService = childService;
     }
     
     [HttpGet(ApiEndPointConstant.Doctor.ConsultationDoctor)]
@@ -23,4 +27,15 @@ public class DoctorController : BaseController<DoctorController>
         var consultations = await _consultationService.GetConsultationByDoctorIdAsync(page, size, doctorId);
         return Ok(consultations);
     }
+
+    [HttpGet(ApiEndPointConstant.Doctor.GetChildProfile)]
+    [ProducesResponseType(typeof(IPaginate<ChildResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetChildProfile(int id)
+    {
+        var doctorId = User.FindFirstValue("userId");
+        var doctorIdInt = int.Parse(doctorId);
+        var response = await _childService.GetChildByIdForDoctorAsync(doctorIdInt, id);
+        return Ok(response);
+    }
+    
 }
