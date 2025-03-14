@@ -12,4 +12,5 @@ public interface IConsultationService
     
     Task<ConsultationResponse> ResponseConsultationAsync(int doctorId, int consultationId, ResponseConsultationRequest request);
     
+    Task<IPaginate<FeedbackConsultationResponse>> GetFeedbackConsultations();
 }

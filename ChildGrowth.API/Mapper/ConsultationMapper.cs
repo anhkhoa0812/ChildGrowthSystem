@@ -9,5 +9,9 @@ public class ConsultationMapper : Profile
     public ConsultationMapper()
     {
         CreateMap<Consultation, ConsultationResponse>();
+
+        CreateMap<Consultation, FeedbackConsultationResponse>()
+            .ForMember(dest => dest.Parent, opt => opt.MapFrom(src => src.Parent))
+            .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.Doctor));
     }
 }
