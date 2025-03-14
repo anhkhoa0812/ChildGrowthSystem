@@ -14,6 +14,7 @@ public static class ApiEndPointConstant
     {
         public const string ConsultationEndpoint = ApiEndpoint + "/consultations";
         public const string ResponseConsultation = ConsultationEndpoint + "/{id}/response";
+        public const string FeedbackConsultation = ConsultationEndpoint + "/feedback";
     }
 
     public static class Doctor

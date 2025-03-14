@@ -7,6 +7,7 @@ using ChildGrowth.Domain.Context;
 using ChildGrowth.Domain.Entities;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChildGrowth.API.Services.Implement;
 
@@ -72,5 +73,17 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
         await _unitOfWork.CommitAsync();
         return _mapper.Map<ConsultationResponse>(consultation);
+    }
+
+    public async Task<IPaginate<FeedbackConsultationResponse>> GetFeedbackConsultations()
+    {
+        var consultations = await _unitOfWork.GetRepository<Consultation>().GetPagingListAsync(
+            predicate: x => x.Feedback != null,
+            orderBy: x => x.OrderByDescending(x => x.RequestDate),
+            include: x => x.Include(x => x.Doctor)
+                .Include(x => x.Parent)
+        );
+        return _mapper.Map<IPaginate<FeedbackConsultationResponse>>(consultations);
+        
     }
 }

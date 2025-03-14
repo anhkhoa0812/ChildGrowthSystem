@@ -1,7 +1,11 @@
 using System.Security.Claims;
 using ChildGrowth.API.Constants;
+using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.Consultation;
+using ChildGrowth.API.Payload.Response.Consultation;
 using ChildGrowth.API.Services.Interfaces;
+using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Paginate;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChildGrowth.API.Controller;
@@ -17,6 +21,8 @@ public class ConsultationController : BaseController<ConsultationController>
     }
     
     [HttpPost(ApiEndPointConstant.Consultation.ConsultationEndpoint)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateConsultation([FromBody] CreateConsultationRequest request)
     {
         var parentId = User.FindFirstValue("userId");
@@ -24,7 +30,7 @@ public class ConsultationController : BaseController<ConsultationController>
         try
         {
             var consultation = await _consultationService.CreateConsultationAsync(parentIdInt, request);
-            return Ok(consultation);
+            return CreatedAtAction(nameof(CreateConsultation), consultation);
         }
         catch (Exception e)
         {
@@ -34,6 +40,8 @@ public class ConsultationController : BaseController<ConsultationController>
     }
 
     [HttpPut(ApiEndPointConstant.Consultation.ResponseConsultation)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ResponseConsultation(int id, ResponseConsultationRequest request)
     {
         var doctorId = User.FindFirstValue("userId");
@@ -42,6 +50,24 @@ public class ConsultationController : BaseController<ConsultationController>
         {
             var consultation = await _consultationService.ResponseConsultationAsync(doctorIdInt, id, request);
             return Ok(consultation);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpGet(ApiEndPointConstant.Consultation.FeedbackConsultation)]
+    [CustomAuthorize(RoleEnum.Admin)] 
+    [ProducesResponseType(typeof(IPaginate<FeedbackConsultationResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetFeedbackConsultations([FromQuery] int page = 1, [FromQuery] int size = 30)
+    {
+        try
+        {
+            var consultations = await _consultationService.GetFeedbackConsultations();
+            return Ok(consultations);
         }
         catch (Exception e)
         {
