@@ -59,4 +59,16 @@ public static class ApiEndPointConstant
         public const string Update = GrowthRecordEndPoint + "/{recordId}";
         public const string Delete = GrowthRecordEndPoint + "/{recordId}";
     }
+    public static class Blog
+    {
+        public const string BlogEndPoint = ApiEndpoint + "/blogs";
+        public const string GetById = BlogEndPoint + "/{blogId}";
+        public const string Create = BlogEndPoint;
+        public const string Update = BlogEndPoint + "/{blogId}";
+        public const string Delete = BlogEndPoint + "/{blogId}";
+        public const string Search = BlogEndPoint + "/search";
+        public const string View = BlogEndPoint + "/{blogId}/view";
+        public const string Like = BlogEndPoint + "/{blogId}/like";
+        public const string Comment = BlogEndPoint + "/{blogId}/comment";
+    }
 }
