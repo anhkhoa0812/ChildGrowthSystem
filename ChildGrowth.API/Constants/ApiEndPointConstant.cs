@@ -28,6 +28,10 @@ public static class ApiEndPointConstant
     public static class Child
     {
         public const string ChildEndPoint = ApiEndpoint + "/children";
+        public const string GetById = ChildEndPoint + "/{childId}";
+        public const string Create = ChildEndPoint;
+        public const string Update = ChildEndPoint + "/{childId}";
+        public const string Delete = ChildEndPoint + "/{childId}";
         public const string GrowthRecordChild = ChildEndPoint + "/{childId}/growth-records";
         public const string GrowthAlertChild = ChildEndPoint + "/{childId}/growth-alerts";
     }
@@ -46,5 +50,13 @@ public static class ApiEndPointConstant
         public const string CreateMembershipPlan = MembershipPlanEndPoint;
         public const string UpdateMembershipPlan = MembershipPlanEndPoint;
         public const string InactiveMembershipPlan = MembershipPlanEndPoint + "/{id}";
+    }
+    public static class GrowthRecord
+    {
+        public const string GrowthRecordEndPoint = ApiEndpoint + "/growth-records";
+        public const string GetById = GrowthRecordEndPoint + "/{recordId}";
+        public const string Create = GrowthRecordEndPoint;
+        public const string Update = GrowthRecordEndPoint + "/{recordId}";
+        public const string Delete = GrowthRecordEndPoint + "/{recordId}";
     }
 }
