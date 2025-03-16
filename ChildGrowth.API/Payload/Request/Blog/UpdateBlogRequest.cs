@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ChildGrowth.API.Utils;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-namespace ChildGrowth.Domain.Entities;
+namespace ChildGrowth.API.Payload.Request.Blog;
 
-public partial class Blog
+public class UpdateBlogRequest
 {
-    public int BlogId { get; set; }
-
+    [MaxLength(200, ErrorMessage = "Title cannot exceed 200 characters.")]
     public string? Title { get; set; }
 
     public string? Content { get; set; }
-
-    public int? AuthorId { get; set; }
 
     public string? Category { get; set; }
 
     public string? Tags { get; set; }
 
-    public DateTime? PublishDate { get; set; }
-
-    public DateTime? UpdatedDate { get; set; }
+    [JsonConverter(typeof(DateOnlyJsonConverter))]
+    public DateOnly? PublishDate { get; set; }
 
     public string? Status { get; set; }
 
+    [Url(ErrorMessage = "Invalid URL format.")]
     public string? ImageUrl { get; set; }
 
     public int? ViewCount { get; set; }
@@ -34,6 +33,4 @@ public partial class Blog
     public string? MetaDescription { get; set; }
 
     public bool? FeaturedStatus { get; set; }
-
-    public virtual User? Author { get; set; }
 }

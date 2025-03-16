@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using ChildGrowth.API.Constants;
 using ChildGrowth.API.Extensions;
 using ChildGrowth.API.Middleware;
+using ChildGrowth.API.Utils;
 using NLog.Web;
 
 var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"))
@@ -21,6 +22,7 @@ try
     builder.Services.AddControllers().AddJsonOptions(x =>
     {
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        x.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
     builder.Services.AddDatabase();
     builder.Services.AddUnitOfWork();
