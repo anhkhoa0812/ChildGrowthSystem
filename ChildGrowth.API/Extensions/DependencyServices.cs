@@ -43,6 +43,7 @@ public static class DependencyServices
         services.AddScoped<IChildService, ChildService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMembershipPlanService, MembershipPlanService>();
+        services.AddScoped<IBlogService, BlogService>();
         return services;
     }
 
