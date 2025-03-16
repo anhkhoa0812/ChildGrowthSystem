@@ -1,5 +1,6 @@
 using AutoMapper;
 using ChildGrowth.API.Enums;
+using ChildGrowth.API.Payload.Request.Children;
 using ChildGrowth.API.Payload.Response.Children;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
@@ -25,6 +26,47 @@ public class ChildService  : BaseService<Child>, IChildService
                 .Include(x => x.GrowthRecords)
         );
         return _mapper.Map<IPaginate<ChildResponse>>(children);
+    }
+    public async Task<ChildResponse> GetChildByIdAsync(int childId)
+    {
+        var child = await _unitOfWork.GetRepository<Child>().SingleOrDefaultAsync(
+            predicate: x => x.ChildId == childId,
+            include: x => x.Include(c => c.Consultations)
+                           .Include(c => c.GrowthRecords)
+        );
+
+        if (child == null) throw new KeyNotFoundException("Child not found");
+
+        return _mapper.Map<ChildResponse>(child);
+    }
+    public async Task<ChildResponse> CreateChildAsync(CreateChildrenRequest request)
+    {
+        var child = _mapper.Map<Child>(request);
+
+        await _unitOfWork.GetRepository<Child>().InsertAsync(child);
+        await _unitOfWork.CommitAsync();
+
+        return _mapper.Map<ChildResponse>(child); 
+    }
+    public async Task<ChildResponse> UpdateChildAsync(int childId, UpdateChildrenRequest request)
+    {
+        var child = await _unitOfWork.GetRepository<Child>().SingleOrDefaultAsync(predicate: x => x.ChildId == childId);
+
+        _mapper.Map(request, child); 
+        _unitOfWork.GetRepository<Child>().UpdateAsync(child);
+        await _unitOfWork.CommitAsync();
+
+        return _mapper.Map<ChildResponse>(child);   
+    }
+    public async Task<bool> DeleteChildAsync(int childId)
+    {
+        var child = await _unitOfWork.GetRepository<Child>().SingleOrDefaultAsync(predicate: x => x.ChildId == childId);
+
+
+        _unitOfWork.GetRepository<Child>().DeleteAsync(child);
+        await _unitOfWork.CommitAsync();
+
+        return true;
     }
 
     public async Task<ChildResponse> GetChildByIdForDoctorAsync(int doctorId, int consultationId)
