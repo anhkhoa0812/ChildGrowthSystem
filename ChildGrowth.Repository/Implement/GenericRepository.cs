@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -76,23 +77,41 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		}
 
 		public Task<IPaginate<T>> GetPagingListAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null, int page = 1,
-			int size = 10)
+			int size = 10, string sortBy = null, bool isAsc = true)
 		{
 			IQueryable<T> query = _dbSet;
 			if(include != null) query = include(query);
 			if(predicate != null) query = query.Where(predicate);
+			if (!string.IsNullOrEmpty(sortBy))
+			{
+				query = ApplySort(query, sortBy, isAsc);
+			}
+			else if (orderBy != null)
+			{
+				query = orderBy(query);
+			}
 			if (orderBy != null) return orderBy(query).ToPaginateAsync(page, size, 1);
 			return query.AsNoTracking().ToPaginateAsync(page, size, 1);
 		}
-
-		public Task<IPaginate<TResult>> GetPagingListAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-			Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null, int page = 1, int size = 10)
+		private IQueryable<T> ApplySort(IQueryable<T> query, string sortBy, bool isAsc)
 		{
-			IQueryable<T> query = _dbSet;
-			if (include != null) query = include(query);
-			if(predicate != null) query = query.Where(predicate);
-			if (orderBy != null) return orderBy(query).Select(selector).ToPaginateAsync(page, size, 1);
-			return query.AsNoTracking().Select(selector).ToPaginateAsync(page, size, 1);
+			var parameter = Expression.Parameter(typeof(T), "x");
+			var property =
+				typeof(T).GetProperty(sortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+			if (property == null)
+			{
+				throw new ArgumentException($"Property '{sortBy}' not found on type {typeof(T).Name}");
+			}
+
+			var propertyAccess = Expression.Property(parameter, property);
+			var lambda = Expression.Lambda(propertyAccess, parameter);
+
+			string methodName = isAsc ? "OrderBy" : "OrderByDescending";
+
+			var resultExpression = Expression.Call(typeof(Queryable), methodName,
+				new Type[] { typeof(T), propertyAccess.Type },
+				query.Expression, Expression.Quote(lambda));
+			return query.Provider.CreateQuery<T>(resultExpression);
 		}
 
 		#endregion
