@@ -31,7 +31,7 @@ public partial class Consultation
 
     public string? Feedback { get; set; }
 
-    public DateOnly? FollowUpDate { get; set; }
+    public DateTime? FollowUpDate { get; set; }
 
     public string? Priority { get; set; }
 

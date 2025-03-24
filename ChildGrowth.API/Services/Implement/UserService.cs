@@ -9,8 +9,10 @@ using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Utils;
 using ChildGrowth.Domain.Context;
 using ChildGrowth.Domain.Entities;
+using ChildGrowth.Domain.Filter.ModelFilter;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using Microsoft.IdentityModel.Tokens;
@@ -24,12 +26,15 @@ public class UserService : BaseService<UserService>, IUserService
     {
         _config = config;
     }
-    public async Task<IPaginate<UserResponse>> GetUserAsync(int page, int size)
+    public async Task<IPaginate<UserResponse>> GetUserAsync(int page,  int size, UserFilter filter, string? sortBy, bool isAsc)
     {
         var users = await _unitOfWork.GetRepository<User>().GetPagingListAsync(
+            predicate: x => x.UserType == RoleEnum.Member.ToString() || x.UserType == RoleEnum.Doctor.ToString(),
             page: page,
             size: size,
-            orderBy: x => x.OrderByDescending(x => x.CreatedAt)
+            filter: filter,
+            sortBy: sortBy,
+            isAsc: isAsc
         );
         return _mapper.Map<IPaginate<UserResponse>>(users);
     }
