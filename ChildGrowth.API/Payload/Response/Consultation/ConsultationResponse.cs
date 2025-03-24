@@ -28,7 +28,7 @@ public class ConsultationResponse
 
     public string? Feedback { get; set; }
 
-    public DateOnly? FollowUpDate { get; set; }
+    public DateTime? FollowUpDate { get; set; }
 
     public string? Priority { get; set; }
 }
