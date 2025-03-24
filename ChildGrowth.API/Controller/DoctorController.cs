@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using ChildGrowth.API.Constants;
+using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Response.Children;
 using ChildGrowth.API.Payload.Response.Consultation;
 using ChildGrowth.API.Services.Interfaces;
+using ChildGrowth.API.Validators;
 using ChildGrowth.Domain.Paginate;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,5 +39,26 @@ public class DoctorController : BaseController<DoctorController>
         var response = await _childService.GetChildByIdForDoctorAsync(doctorIdInt, id);
         return Ok(response);
     }
+    [HttpPatch(ApiEndPointConstant.Doctor.ApproveConsultation)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
+    [CustomAuthorize(RoleEnum.Doctor)]
+    public async Task<IActionResult> ApproveConsultation(int consultationId)
+    {
+        var doctorId = User.FindFirstValue("userId");
+        var doctorIdInt = int.Parse(doctorId);
+        var response = await _consultationService.ApproveConsultationAsync(doctorIdInt, consultationId);
+        return Ok(response);
+    }
+    [HttpPatch(ApiEndPointConstant.Doctor.RequestChildGrowthRecord)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
+    [CustomAuthorize(RoleEnum.Doctor)]
+    public async Task<IActionResult> RequestChildGrowthRecord(int consultationId)
+    {
+        var doctorId = User.FindFirstValue("userId");
+        var doctorIdInt = int.Parse(doctorId);
+        var response = await _consultationService.RequestChildGrowthRecordAsync(doctorIdInt, consultationId);
+        return Ok(response);
+    }
+    
     
 }

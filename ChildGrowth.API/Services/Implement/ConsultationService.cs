@@ -86,4 +86,77 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         return _mapper.Map<IPaginate<FeedbackConsultationResponse>>(consultations);
         
     }
+
+    public async Task<ConsultationResponse> ApproveConsultationAsync(int doctorId, int consultationId)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.ConsultationId == consultationId
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation");
+        }
+        if (consultation.DoctorId != null)
+        {
+            throw new BadHttpRequestException("This consultation is already approved");
+        }
+
+        if (consultation.Status != EConsultationStatus.Pending.ToString())
+        {
+            throw new BadHttpRequestException("This consultation is not pending");
+        }
+        
+        consultation.DoctorId = doctorId;
+        consultation.Status = EConsultationStatus.Approved.ToString();
+        _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
+        await _unitOfWork.CommitAsync();
+        return _mapper.Map<ConsultationResponse>(consultation);
+        
+    }
+
+    public async Task<ConsultationResponse> RequestChildGrowthRecordAsync(int doctorId, int consultationId)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.ConsultationId == consultationId && x.DoctorId == doctorId
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation or you are not the doctor of this consultation");
+        }
+        if (consultation.Status != EConsultationStatus.Approved.ToString())
+        {
+            throw new BadHttpRequestException("This consultation is not approved");
+        }
+        consultation.Status = EConsultationStatus.SharedData.ToString();
+        _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
+        await _unitOfWork.CommitAsync();
+        return _mapper.Map<ConsultationResponse>(consultation);
+    }
+
+    public async Task<ConsultationResponse> ShareChildGrowthRecordAsync(int parentId, SharedChildGrowthRequest request)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.ConsultationId == request.ConsultationId && x.ParentId == parentId,
+            include: x => x.Include(x => x.Parent)
+                .ThenInclude(x => x.Children)
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation or you are not the parent of this consultation");
+        }
+        if (consultation.Status != EConsultationStatus.RequestSharedData.ToString())
+        {
+            throw new BadHttpRequestException("This consultation is not in requesting shared data");
+        }
+
+        if (!consultation.Parent.Children.Any(x => x.ChildId == request.ChildId))
+        {
+            throw new BadHttpRequestException("This child is not belong to this parent");
+        }
+        consultation.ChildId = request.ChildId;
+        consultation.Status = EConsultationStatus.SharedData.ToString();
+        _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
+        await _unitOfWork.CommitAsync();
+        return _mapper.Map<ConsultationResponse>(consultation);
+    }
 }
