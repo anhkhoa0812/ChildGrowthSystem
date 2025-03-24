@@ -6,6 +6,7 @@ using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.API.Payload.Request.User;
 using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Filter.ModelFilter;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChildGrowth.API.Controller;
@@ -24,9 +25,9 @@ public class UserController : BaseController<UserController>
     [HttpGet(ApiEndPointConstant.User.UserEndPoint)]
     [ProducesResponseType(typeof(IPaginate<UserResponse>), StatusCodes.Status200OK)]
     [CustomAuthorize(RoleEnum.Admin)]
-    public async Task<IActionResult> GetAllUser([FromQuery]int page = 1,[FromQuery] int size = 30)
+    public async Task<IActionResult> GetAllUser([FromQuery]int page = 1,[FromQuery] int size = 30, [FromQuery] UserFilter? filter = null,[FromQuery] string? sortBy = null,[FromQuery] bool isAsc = true )
     {
-        var users = await _userService.GetUserAsync(page, size);
+        var users = await _userService.GetUserAsync(page, size, filter, sortBy, isAsc);
         return Ok(users);
     }
     [HttpPost(ApiEndPointConstant.User.SignUp)]
