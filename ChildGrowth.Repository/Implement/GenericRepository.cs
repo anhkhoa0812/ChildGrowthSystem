@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using ChildGrowth.Domain.Filter;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -76,10 +77,15 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 			return await query.Select(selector).ToListAsync();
 		}
 
-		public Task<IPaginate<T>> GetPagingListAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null, int page = 1,
+		public Task<IPaginate<T>> GetPagingListAsync(Expression<Func<T, bool>> predicate = null, IFilter<T> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null, int page = 1,
 			int size = 10, string sortBy = null, bool isAsc = true)
 		{
 			IQueryable<T> query = _dbSet;
+			if (filter != null)
+			{
+				var filterExpression = filter.ToExpression();
+				query = query.Where(filterExpression);
+			}
 			if(include != null) query = include(query);
 			if(predicate != null) query = query.Where(predicate);
 			if (!string.IsNullOrEmpty(sortBy))
