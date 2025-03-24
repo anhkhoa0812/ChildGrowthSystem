@@ -75,4 +75,24 @@ public class ConsultationController : BaseController<ConsultationController>
             return BadRequest(e.Message);
         }
     }
+    [CustomAuthorize(RoleEnum.Member)]
+    [HttpPatch(ApiEndPointConstant.Consultation.SharedData)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ShareChildGrowthRecord( SharedChildGrowthRequest request)
+    {
+        var parentId = User.FindFirstValue("userId");
+        var parentIdInt = int.Parse(parentId!);
+        try
+        {
+            var consultation = await _consultationService.ShareChildGrowthRecordAsync(parentIdInt, request);
+            return Ok(consultation);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
 }

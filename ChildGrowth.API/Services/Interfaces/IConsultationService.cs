@@ -13,4 +13,10 @@ public interface IConsultationService
     Task<ConsultationResponse> ResponseConsultationAsync(int doctorId, int consultationId, ResponseConsultationRequest request);
     
     Task<IPaginate<FeedbackConsultationResponse>> GetFeedbackConsultations();
+    
+    Task<ConsultationResponse> ApproveConsultationAsync(int doctorId, int consultationId);
+    
+    Task<ConsultationResponse> RequestChildGrowthRecordAsync(int doctorId, int consultationId);
+    
+    Task<ConsultationResponse> ShareChildGrowthRecordAsync(int parentId, SharedChildGrowthRequest request);
 }
