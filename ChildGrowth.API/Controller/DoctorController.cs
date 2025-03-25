@@ -71,5 +71,4 @@ public class DoctorController : BaseController<DoctorController>
         return Ok(response);
     }
     
-    
 }

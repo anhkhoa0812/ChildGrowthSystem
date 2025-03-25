@@ -46,7 +46,7 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
             RequestDate = DateTime.UtcNow,
             Priority = "Normal",
             ConsultationType = consultationType,
-            Status = EConsultationStatus.Pending.ToString(),
+            Status = EConsultationStatus.Pending.ToString()
             FollowUpDate = DateTime.Now
         };
         await _unitOfWork.GetRepository<Consultation>().InsertAsync(consultation);

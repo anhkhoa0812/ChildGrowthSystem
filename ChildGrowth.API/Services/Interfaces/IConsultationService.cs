@@ -20,7 +20,7 @@ public interface IConsultationService
     Task<ConsultationResponse> RequestChildGrowthRecordAsync(int doctorId, int consultationId);
     
     Task<ConsultationResponse> ShareChildGrowthRecordAsync(int parentId, SharedChildGrowthRequest request);
-    
+  
     Task<DoctorDashboardResponse> GetDoctorDashboardAsync(int doctorId, int month);
     
 }
