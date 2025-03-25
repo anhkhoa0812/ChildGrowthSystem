@@ -28,6 +28,7 @@ public partial class UserMembership
     public string? Status { get; set; }
 
     public string? CancellationReason { get; set; }
+    public long? OrderCode { get; set; }
 
     public virtual MembershipPlan? Plan { get; set; }
 
