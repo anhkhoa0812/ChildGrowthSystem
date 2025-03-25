@@ -24,4 +24,12 @@ public class PaymentController : BaseController<PaymentController>
         return Ok(result);
     }
     
+    [HttpPatch(ApiEndPointConstant.Payment.PaymentEndPoint)]
+    [CustomAuthorize(RoleEnum.Member)]
+    public async Task<IActionResult> UpdatePayment([FromBody] UpdatePaymentRequest request)
+    {
+        var result = await _paymentService.UpdatePayment(request);
+        return Ok(result);
+    }
+    
 }

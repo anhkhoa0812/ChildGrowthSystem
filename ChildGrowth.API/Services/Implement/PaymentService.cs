@@ -80,4 +80,35 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
             return null;
         }
     }
+
+    public async Task<bool> UpdatePayment(UpdatePaymentRequest request)
+    {
+        try
+        {
+            var userMembership = await _unitOfWork.GetRepository<UserMembership>().SingleOrDefaultAsync(predicate: um => um.OrderCode == request.OrderCode && um.UserId == request.UserId);
+            if(userMembership == null || userMembership.Status == PaymentStatusEnum.Paid.ToString() || userMembership.Status == PaymentStatusEnum.Cancelled.ToString())
+            {
+                throw new Exception("User membership cancelled or already paid");
+            }
+
+            PayOS payOs = new PayOS(_payOsSettings.ClientId, _payOsSettings.ApiKey, _payOsSettings.ChecksumKey);
+            PaymentLinkInformation paymentLinkInformation = await payOs.getPaymentLinkInformation(request.OrderCode);
+            if(paymentLinkInformation == null)
+            {
+                throw new Exception("Payment not found");
+            }
+            if(paymentLinkInformation.status == "Pending" || paymentLinkInformation.status == "Processing")
+            {
+                return false;
+            }
+            userMembership.Status = paymentLinkInformation.status;
+            _unitOfWork.GetRepository<UserMembership>().UpdateAsync(userMembership);
+            await _unitOfWork.CommitAsync();
+            return true;
+        } catch (Exception e)
+        {
+            throw new Exception(e.Message);
+            return false;
+        }
+    }
 }
