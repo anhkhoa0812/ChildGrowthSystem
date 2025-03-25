@@ -2,6 +2,7 @@ using AutoMapper;
 using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.Consultation;
 using ChildGrowth.API.Payload.Response.Consultation;
+using ChildGrowth.API.Payload.Response.Doctor;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
 using ChildGrowth.Domain.Entities;
@@ -46,6 +47,7 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
             Priority = "Normal",
             ConsultationType = consultationType,
             Status = EConsultationStatus.Pending.ToString()
+            FollowUpDate = DateTime.Now
         };
         await _unitOfWork.GetRepository<Consultation>().InsertAsync(consultation);
         await _unitOfWork.CommitAsync();
@@ -69,6 +71,7 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
             throw new BadHttpRequestException("Can not response to this consultation");
         consultation.Response = request.Response;
         consultation.ResponseDate = DateTime.UtcNow;
+        consultation.FollowUpDate = DateTime.Now;
         consultation.Status = EConsultationStatus.Completed.ToString();
         _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
         await _unitOfWork.CommitAsync();
@@ -108,6 +111,7 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         
         consultation.DoctorId = doctorId;
         consultation.Status = EConsultationStatus.Approved.ToString();
+        consultation.FollowUpDate = DateTime.Now;
         _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
         await _unitOfWork.CommitAsync();
         return _mapper.Map<ConsultationResponse>(consultation);
@@ -128,6 +132,7 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
             throw new BadHttpRequestException("This consultation is not approved");
         }
         consultation.Status = EConsultationStatus.SharedData.ToString();
+        consultation.FollowUpDate = DateTime.Now;
         _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
         await _unitOfWork.CommitAsync();
         return _mapper.Map<ConsultationResponse>(consultation);
@@ -155,8 +160,49 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         }
         consultation.ChildId = request.ChildId;
         consultation.Status = EConsultationStatus.SharedData.ToString();
+        consultation.FollowUpDate = DateTime.Now;
         _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
         await _unitOfWork.CommitAsync();
         return _mapper.Map<ConsultationResponse>(consultation);
+    }
+
+    public async Task<DoctorDashboardResponse> GetDoctorDashboardAsync(int doctorId, int month)
+    {
+        var consultations = await _unitOfWork.GetRepository<Consultation>().GetListAsync();
+        var doctor = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
+            predicate: x => x.UserId == doctorId
+        );
+        if (doctor == null)
+        {
+            throw new BadHttpRequestException("Can not find doctor");
+        }
+        var doctorDashboardResponse = new DoctorDashboardResponse();
+        doctorDashboardResponse.PendingConsultationTodayCount =
+            consultations.Count(x => x.Status == EConsultationStatus.Pending.ToString());
+
+        var startDate = DateTime.Today.AddDays(-1);
+        var endDate = DateTime.Today;
+        
+        var consultationsToday = consultations.Where(x => x.FollowUpDate >= startDate && x.FollowUpDate <= endDate && x.DoctorId == doctorId);
+        doctorDashboardResponse.AllConsultationTodayCount = consultationsToday.Count();
+        doctorDashboardResponse.CompletedConsultationTodayCount =
+            consultationsToday.Count(x => x.Status == EConsultationStatus.Completed.ToString());
+        doctorDashboardResponse.SharedDataConsultationTodayCount =
+            consultationsToday.Count(x => x.Status == EConsultationStatus.SharedData.ToString());
+        
+        var doctorDashboardResponseByMonth = new DoctorDashboardResponseByMonth();
+        var consultationsByMonth = consultations.Where(x => x.FollowUpDate!.Value.Month == month 
+                                                            && x.FollowUpDate!.Value.Year == DateTime.UtcNow.Year 
+                                                            && x.DoctorId == doctorId);
+        doctorDashboardResponseByMonth.RejectedConsultationCount = consultationsByMonth.Count(x => 
+            x.Status == EConsultationStatus.Rejected.ToString());
+        doctorDashboardResponseByMonth.CompletedConsultationCount = consultationsByMonth.Count(x => 
+            x.Status == EConsultationStatus.Completed.ToString());
+        doctorDashboardResponseByMonth.CancelledConsultationCount = consultationsByMonth.Count(x => 
+            x.Status == EConsultationStatus.Cancelled.ToString());
+        
+        doctorDashboardResponse.ByMonth = doctorDashboardResponseByMonth;
+
+        return doctorDashboardResponse;
     }
 }
