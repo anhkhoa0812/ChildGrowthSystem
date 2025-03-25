@@ -25,6 +25,7 @@ public static class ApiEndPointConstant
         public const string GetChildProfile = DoctorEndPoint + "/consultations/{id}";
         public const string ApproveConsultation = DoctorEndPoint + "/consultations/{consultationId}/approve";
         public const string RequestChildGrowthRecord = DoctorEndPoint + "/consultations/{consultationId}/request";
+        public const string Dashboard = DoctorEndPoint + "/dashboard";
     }
 
 

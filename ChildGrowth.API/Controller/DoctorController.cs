@@ -3,6 +3,7 @@ using ChildGrowth.API.Constants;
 using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Response.Children;
 using ChildGrowth.API.Payload.Response.Consultation;
+using ChildGrowth.API.Payload.Response.Doctor;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Validators;
 using ChildGrowth.Domain.Paginate;
@@ -57,6 +58,16 @@ public class DoctorController : BaseController<DoctorController>
         var doctorId = User.FindFirstValue("userId");
         var doctorIdInt = int.Parse(doctorId);
         var response = await _consultationService.RequestChildGrowthRecordAsync(doctorIdInt, consultationId);
+        return Ok(response);
+    }
+    [HttpGet(ApiEndPointConstant.Doctor.Dashboard)]
+    [ProducesResponseType(typeof(DoctorDashboardResponse), StatusCodes.Status200OK)]
+    [CustomAuthorize(RoleEnum.Doctor)]
+    public async Task<IActionResult> GetDoctorDashboard([FromQuery] int month)
+    {
+        var doctorId = User.FindFirstValue("userId");
+        var doctorIdInt = int.Parse(doctorId);
+        var response = await _consultationService.GetDoctorDashboardAsync(doctorIdInt, month);
         return Ok(response);
     }
     
