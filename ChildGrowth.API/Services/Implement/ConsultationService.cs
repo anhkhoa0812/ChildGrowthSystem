@@ -6,6 +6,7 @@ using ChildGrowth.API.Payload.Response.Doctor;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
 using ChildGrowth.Domain.Entities;
+using ChildGrowth.Domain.Filter.ModelFilter;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -205,4 +206,18 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
 
         return doctorDashboardResponse;
     }
+
+    public async Task<IPaginate<ConsultationResponse>> GetAllPendingConsultations(int page, int size, ConsultationFilter? filter, string? sortBy, bool isAsc)
+    {
+        var consultations = await _unitOfWork.GetRepository<Consultation>().GetPagingListAsync(
+            predicate: x => x.Status == EConsultationStatus.Pending.ToString(),
+            page: page,
+            size: size,
+            sortBy: sortBy ?? "RequestDate",
+            isAsc: isAsc,
+            include: x => x.Include(x => x.Parent)
+        );
+        return _mapper.Map<IPaginate<ConsultationResponse>>(consultations);
+    }
+    
 }
