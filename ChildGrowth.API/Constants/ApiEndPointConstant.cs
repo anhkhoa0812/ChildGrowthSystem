@@ -55,6 +55,11 @@ public static class ApiEndPointConstant
         public const string UpdateMembershipPlan = MembershipPlanEndPoint;
         public const string InactiveMembershipPlan = MembershipPlanEndPoint + "/{id}";
     }
+
+    public static class Payment
+    {
+        public const string PaymentEndPoint = ApiEndpoint + "/payments";
+    }
     public static class GrowthRecord
     {
         public const string GrowthRecordEndPoint = ApiEndpoint + "/growth-records";

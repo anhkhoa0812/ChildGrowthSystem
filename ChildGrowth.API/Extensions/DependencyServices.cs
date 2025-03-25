@@ -1,4 +1,5 @@
 using System.Text;
+using ChildGrowth.API.Payload.Request.Payment;
 using ChildGrowth.API.Services.Implement;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
@@ -44,6 +45,7 @@ public static class DependencyServices
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMembershipPlanService, MembershipPlanService>();
         services.AddScoped<IBlogService, BlogService>();
+        services.AddScoped<IPaymentService, PaymentService>();
         return services;
     }
 
@@ -66,6 +68,14 @@ public static class DependencyServices
                         Encoding.UTF8.GetBytes("PRN231SE1731095AESIEUNHAN12345678PRN231SE1731095AESIEUNHAN12345678PRN231SE1731095AESIEUNHAN12345678"))
             };
         });
+        return services;
+    }
+    
+    public static IServiceCollection AddPayOS(this IServiceCollection services)
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
+        services.Configure<PayOsSettings>(configuration.GetSection("PayOS"));
         return services;
     }
 
