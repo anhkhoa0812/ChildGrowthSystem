@@ -16,6 +16,7 @@ public static class ApiEndPointConstant
         public const string ResponseConsultation = ConsultationEndpoint + "/{id}/response";
         public const string FeedbackConsultation = ConsultationEndpoint + "/feedback";
         public const string SharedData = ConsultationEndpoint + "/shared-data";
+        public const string Pending = ConsultationEndpoint + "/pending";
     }
 
     public static class Doctor
