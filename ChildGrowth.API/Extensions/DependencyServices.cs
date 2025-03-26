@@ -46,6 +46,7 @@ public static class DependencyServices
         services.AddScoped<IMembershipPlanService, MembershipPlanService>();
         services.AddScoped<IBlogService, BlogService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IUserMembershipService, UserMembershipService>();
         return services;
     }
 
