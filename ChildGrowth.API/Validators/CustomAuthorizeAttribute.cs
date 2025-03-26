@@ -1,5 +1,5 @@
-using ChildGrowth.API.Enums;
 using ChildGrowth.API.Utils;
+using ChildGrowth.Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ChildGrowth.API.Validators;

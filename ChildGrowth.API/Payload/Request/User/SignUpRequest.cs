@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using ChildGrowth.API.Enums;
+using ChildGrowth.Domain.Enum;
 
 namespace ChildGrowth.API.Payload.Request.User;
 public class SignUpRequest

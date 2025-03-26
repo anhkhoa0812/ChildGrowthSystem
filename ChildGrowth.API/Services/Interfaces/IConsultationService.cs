@@ -8,7 +8,7 @@ namespace ChildGrowth.API.Services.Interfaces;
 
 public interface IConsultationService
 {
-    Task<IPaginate<ConsultationResponse>> GetConsultationByDoctorIdAsync(int page, int size, int doctorId);
+    Task<IPaginate<ConsultationResponse>> GetConsultationByDoctorIdAsync(int page, int size, int doctorId,  ConsultationFilter? filter, string? sortBy, bool isAsc);
     
     Task<ConsultationResponse> CreateConsultationAsync(int parentId, CreateConsultationRequest request);
     
@@ -25,4 +25,5 @@ public interface IConsultationService
     Task<DoctorDashboardResponse> GetDoctorDashboardAsync(int doctorId, int month);
     
     Task<IPaginate<ConsultationResponse>> GetAllPendingConsultations(int page, int size, ConsultationFilter? filter, string? sortBy, bool isAsc);
+    Task<ConsultationResponse> GetPendingConsultationByIdAsync(int consultationId);
 }
