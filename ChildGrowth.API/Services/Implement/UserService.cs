@@ -80,6 +80,8 @@ public class UserService : BaseService<UserService>, IUserService
             var accessToken = GetAccessToken(user);
             return new SignInResponse()
             {
+                UserId = user.UserId,
+                Role = user.UserType,
                 AccessToken = accessToken,
             };
         } catch (Exception e)
