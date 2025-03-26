@@ -1,6 +1,9 @@
 using ChildGrowth.API.Constants;
+using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.MembershipPlan;
 using ChildGrowth.API.Services.Interfaces;
+using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Enum;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChildGrowth.API.Controller;
@@ -32,6 +35,7 @@ public class MembershipPlanController : BaseController<MembershipPlanController>
     }
     
     [HttpPost(ApiEndPointConstant.MembershipPlan.CreateMembershipPlan)]
+    [CustomAuthorize(RoleEnum.Admin)]
     public async Task<IActionResult> CreateMembershipPlan([FromBody] CreateMembershipPlanRequest request)
     {
         var result = await _membershipPlanService.CreateMembershipPlan(request);
@@ -39,6 +43,7 @@ public class MembershipPlanController : BaseController<MembershipPlanController>
     }
     
     [HttpPut(ApiEndPointConstant.MembershipPlan.UpdateMembershipPlan)]
+    [CustomAuthorize(RoleEnum.Admin)]
     public async Task<IActionResult> UpdateMembershipPlan([FromBody] UpdateMembershipPlanRequest request)
     {
         var result = await _membershipPlanService.UpdateMembershipPlan(request);
@@ -46,6 +51,7 @@ public class MembershipPlanController : BaseController<MembershipPlanController>
     }
     
     [HttpDelete(ApiEndPointConstant.MembershipPlan.InactiveMembershipPlan)]
+    [CustomAuthorize(RoleEnum.Admin)]
     public async Task<IActionResult> InactiveMembershipPlan(int id)
     {
         var result = await _membershipPlanService.InactiveMembershipPlan(id);
