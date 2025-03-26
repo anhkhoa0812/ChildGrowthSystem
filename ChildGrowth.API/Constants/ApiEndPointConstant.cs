@@ -16,12 +16,14 @@ public static class ApiEndPointConstant
         public const string ResponseConsultation = ConsultationEndpoint + "/{id}/response";
         public const string FeedbackConsultation = ConsultationEndpoint + "/feedback";
         public const string SharedData = ConsultationEndpoint + "/shared-data";
+        public const string Pending = ConsultationEndpoint + "/pending";
+        public const string PendingById = Pending + "/{id}";
     }
 
     public static class Doctor
     {
         public const string DoctorEndPoint = ApiEndpoint + "/doctors";
-        public const string ConsultationDoctor = DoctorEndPoint + "/{doctorId}/consultations";
+        public const string ConsultationDoctor = DoctorEndPoint + "/consultations";
         public const string GetChildProfile = DoctorEndPoint + "/consultations/{id}";
         public const string ApproveConsultation = DoctorEndPoint + "/consultations/{consultationId}/approve";
         public const string RequestChildGrowthRecord = DoctorEndPoint + "/consultations/{consultationId}/request";

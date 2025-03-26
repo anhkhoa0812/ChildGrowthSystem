@@ -1,10 +1,11 @@
 using System.Security.Claims;
 using ChildGrowth.API.Constants;
-using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.Consultation;
 using ChildGrowth.API.Payload.Response.Consultation;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Enum;
+using ChildGrowth.Domain.Filter.ModelFilter;
 using ChildGrowth.Domain.Paginate;
 using Microsoft.AspNetCore.Mvc;
 
@@ -86,6 +87,44 @@ public class ConsultationController : BaseController<ConsultationController>
         try
         {
             var consultation = await _consultationService.ShareChildGrowthRecordAsync(parentIdInt, request);
+            return Ok(consultation);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    [CustomAuthorize(RoleEnum.Doctor, RoleEnum.Admin)]
+    [HttpGet(ApiEndPointConstant.Consultation.Pending)]
+    [ProducesResponseType(typeof(IPaginate<ConsultationResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAllPendingConsultations([FromQuery] int page = 1, 
+        [FromQuery] int size = 30, 
+        [FromQuery] ConsultationFilter? filter = null, 
+        [FromQuery] string? sortBy = null, 
+        [FromQuery] bool isAsc = false)
+    {
+        try
+        {
+            var consultations = await _consultationService.GetAllPendingConsultations(page, size, filter, sortBy, isAsc);
+            return Ok(consultations);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    [CustomAuthorize(RoleEnum.Admin, RoleEnum.Doctor)]
+    [HttpGet(ApiEndPointConstant.Consultation.PendingById)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetPendingConsultationById(int id)
+    {
+        try
+        {
+            var consultation = await _consultationService.GetPendingConsultationByIdAsync(id);
             return Ok(consultation);
         }
         catch (Exception e)

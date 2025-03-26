@@ -1,12 +1,12 @@
 using AutoMapper;
 using ChildGrowth.API.Constants;
-using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.Children;
 using ChildGrowth.API.Payload.Response.Children;
 using ChildGrowth.API.Payload.Response.GrowthAlert;
 using ChildGrowth.API.Payload.Response.GrowthRecord;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Enum;
 using ChildGrowth.Domain.Paginate;
 using Microsoft.AspNetCore.Mvc;
 

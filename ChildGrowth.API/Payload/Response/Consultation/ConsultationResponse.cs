@@ -1,3 +1,6 @@
+using ChildGrowth.API.Payload.Response.Children;
+using ChildGrowth.API.Payload.Response.User;
+
 namespace ChildGrowth.API.Payload.Response.Consultation;
 
 public class ConsultationResponse
@@ -31,4 +34,6 @@ public class ConsultationResponse
     public DateTime? FollowUpDate { get; set; }
 
     public string? Priority { get; set; }
+    public UserResponse? Parent { get; set; }
+    public ChildResponse? Child { get; set; }
 }

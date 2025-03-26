@@ -1,8 +1,8 @@
 using ChildGrowth.API.Constants;
-using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.MembershipPlan;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Enum;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChildGrowth.API.Controller;
