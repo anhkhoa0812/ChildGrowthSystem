@@ -1,4 +1,4 @@
-namespace ChildGrowth.API.Enums;
+namespace ChildGrowth.Domain.Enum;
 
 public enum PaymentStatusEnum
 {
