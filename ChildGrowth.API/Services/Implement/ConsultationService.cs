@@ -1,11 +1,11 @@
 using AutoMapper;
-using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.Consultation;
 using ChildGrowth.API.Payload.Response.Consultation;
 using ChildGrowth.API.Payload.Response.Doctor;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.Domain.Context;
 using ChildGrowth.Domain.Entities;
+using ChildGrowth.Domain.Enum;
 using ChildGrowth.Domain.Filter.ModelFilter;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
@@ -19,13 +19,17 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
     {
     }
 
-    public async Task<IPaginate<ConsultationResponse>> GetConsultationByDoctorIdAsync(int page, int size, int doctorId)
+    public async Task<IPaginate<ConsultationResponse>> GetConsultationByDoctorIdAsync(int page, int size, int doctorId,  ConsultationFilter? filter, string? sortBy, bool isAsc)
     {
         var consultation = await _unitOfWork.GetRepository<Consultation>().GetPagingListAsync(
             predicate: x => x.DoctorId == doctorId,
             page: page,
             size: size,
-            orderBy: x => x.OrderByDescending(x => x.RequestDate)
+            sortBy: sortBy ?? "FollowUpDate",
+            filter: filter,
+            isAsc: isAsc,
+            include: x => x.Include(x => x.Parent)
+                .Include(x => x.Child)
         );
         return _mapper.Map<IPaginate<ConsultationResponse>>(consultation);
     }
@@ -219,5 +223,17 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         );
         return _mapper.Map<IPaginate<ConsultationResponse>>(consultations);
     }
-    
+
+    public async Task<ConsultationResponse> GetPendingConsultationByIdAsync(int consultationId)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.ConsultationId == consultationId && x.Status == EConsultationStatus.Pending.ToString(),
+            include: x => x.Include(x => x.Parent)
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation");
+        }
+        return _mapper.Map<ConsultationResponse>(consultation);
+    }
 }

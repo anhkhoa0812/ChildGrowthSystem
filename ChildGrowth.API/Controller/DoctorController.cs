@@ -1,11 +1,12 @@
 using System.Security.Claims;
 using ChildGrowth.API.Constants;
-using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Response.Children;
 using ChildGrowth.API.Payload.Response.Consultation;
 using ChildGrowth.API.Payload.Response.Doctor;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Enum;
+using ChildGrowth.Domain.Filter.ModelFilter;
 using ChildGrowth.Domain.Paginate;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,9 +26,11 @@ public class DoctorController : BaseController<DoctorController>
     
     [HttpGet(ApiEndPointConstant.Doctor.ConsultationDoctor)]
     [ProducesResponseType(typeof(IPaginate<ConsultationResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetConsultationByDoctorId([FromQuery]int page = 1,[FromQuery] int size = 30,int doctorId = 0)
+    public async Task<IActionResult> GetConsultationByDoctorId([FromQuery]int page = 1,[FromQuery] int size = 30, [FromQuery] ConsultationFilter? filter = null, [FromQuery] string? sortBy = null, [FromQuery] bool isAsc = false)
     {
-        var consultations = await _consultationService.GetConsultationByDoctorIdAsync(page, size, doctorId);
+        var doctorId = User.FindFirstValue("userId");
+        var doctorIdInt = int.Parse(doctorId);
+        var consultations = await _consultationService.GetConsultationByDoctorIdAsync(page, size, doctorIdInt, filter, sortBy, isAsc);
         return Ok(consultations);
     }
 

@@ -3,6 +3,7 @@ using ChildGrowth.API.Enums;
 using ChildGrowth.API.Payload.Request.Payment;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
