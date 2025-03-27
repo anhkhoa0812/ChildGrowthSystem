@@ -13,6 +13,7 @@ using ChildGrowth.Domain.Filter.ModelFilter;
 using ChildGrowth.Domain.Paginate;
 using ChildGrowth.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using Microsoft.IdentityModel.Tokens;
@@ -26,7 +27,7 @@ public class UserService : BaseService<UserService>, IUserService
     {
         _config = config;
     }
-    public async Task<IPaginate<UserResponse>> GetUserAsync(int page,  int size, UserFilter filter, string? sortBy, bool isAsc)
+    public async Task<IPaginate<UserResponse>> GetUserAsync(int page, int size, UserFilter filter, string? sortBy, bool isAsc)
     {
         var users = await _unitOfWork.GetRepository<User>().GetPagingListAsync(
             predicate: x => x.UserType == RoleEnum.Member.ToString() || x.UserType == RoleEnum.Doctor.ToString(),
@@ -34,19 +35,62 @@ public class UserService : BaseService<UserService>, IUserService
             size: size,
             filter: filter,
             sortBy: sortBy,
-            isAsc: isAsc
+            isAsc: isAsc,
+            include: x => x.Include(u => u.UserMemberships).ThenInclude(um => um.Plan) // Include MembershipPlan
         );
         return _mapper.Map<IPaginate<UserResponse>>(users);
+    }
+
+    public async Task<UserResponse> GetUserByIdAsync(int id)
+    {
+        var userResponse = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
+            predicate: u => u.UserId == id,
+            include: x => x.Include(u => u.UserMemberships).ThenInclude(um => um.Plan));
+        return _mapper.Map<UserResponse>(userResponse);
+    }
+
+    public async Task<bool> UpdateUserAsync(int id, UpdateUserRequest request)
+    {
+        try
+        {
+            var user = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(predicate: u => u.UserId == id);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+            var emailExist = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
+                selector: u => u.Email,
+                predicate: u => u.Email == request.Email && u.UserId != id);
+            if (emailExist != null)
+            {
+                throw new Exception("Email already exists");
+            }
+            var userUpdate = _mapper.Map(request, user);
+            _unitOfWork.GetRepository<User>().UpdateAsync(userUpdate);
+            await _unitOfWork.CommitAsync();
+            return true;
+        } catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+            throw new Exception(e.Message);
+        }
     }
 
     public async Task<SignInResponse> SignUp(SignUpRequest request)
     {
         try
         {
-            var isUserExist = IsUserExist(request.Username);
-            if (isUserExist.Result)
+            var userExist = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(predicate: u => u.Username == request.Username);
+            if (userExist != null)
             {
-                throw new Exception("User already exist");
+                throw new Exception("Username already exists");
+            }
+            var emailExist = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
+                selector:u => u.Email,
+                predicate: u => u.Email == request.Email);
+            if (emailExist != null)
+            {
+                throw new Exception("Email already exists");
             }
             var user = _mapper.Map<User>(request);
             user.Password = PasswordUtil.HashPassword(request.Password);
