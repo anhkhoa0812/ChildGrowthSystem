@@ -11,4 +11,6 @@ public interface IUserService
     Task<SignInResponse> SignUp(SignUpRequest request);
     Task<SignInResponse> SignIn(SignInRequest request);
     Task<IPaginate<UserResponse>> GetUserAsync(int page, int size, UserFilter filter, string? sortBy, bool isAsc);
+    Task<UserResponse> GetUserByIdAsync(int id);
+    Task<bool> UpdateUserAsync(int id, UpdateUserRequest request);
 }
