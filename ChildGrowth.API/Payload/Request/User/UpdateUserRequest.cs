@@ -3,20 +3,8 @@ using ChildGrowth.Domain.Enum;
 
 namespace ChildGrowth.API.Payload.Request.User
 {
-    public class SignUpRequest
+    public class UpdateUserRequest
     {
-        [Required]
-        public RoleEnum UserType { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 3)]
-        public string Username { get; set; } = null!;
-
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$", ErrorMessage = "Password must be at least 6 characters long and contain at least one letter and one number.")]
-        public string Password { get; set; } = null!;
-
         [Required]
         [EmailAddress]
         public string Email { get; set; } = null!;
@@ -34,7 +22,7 @@ namespace ChildGrowth.API.Payload.Request.User
 
         [Required]
         [DataType(DataType.Date)]
-        [CustomValidation(typeof(SignUpRequest), nameof(ValidateDateOfBirth))]
+        [CustomValidation(typeof(UpdateUserRequest), nameof(ValidateDateOfBirth))]
         public DateOnly DateOfBirth { get; set; }
 
         [Required]

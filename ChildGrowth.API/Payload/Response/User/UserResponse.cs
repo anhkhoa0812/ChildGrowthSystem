@@ -6,7 +6,7 @@ public class UserResponse
 
     public string Username { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
+    //public string Password { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
@@ -22,25 +22,25 @@ public class UserResponse
 
     public string? Gender { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    //public DateTime? CreatedAt { get; set; }
 
-    public DateTime? LastLogin { get; set; }
+    //public DateTime? LastLogin { get; set; }
 
     public string? Status { get; set; }
 
     public string? AvatarUrl { get; set; }
 
-    public string? MembershipStatus { get; set; }
+    public string? MembershipPlan { get; set; }
 
-    public string? NotificationPreferences { get; set; }
+    //public string? NotificationPreferences { get; set; }
 
-    public string? Language { get; set; }
+    //public string? Language { get; set; }
 
-    public string? TimeZone { get; set; }
+    //public string? TimeZone { get; set; }
 
-    public DateTime? LastNotificationCheck { get; set; }
+    //public DateTime? LastNotificationCheck { get; set; }
 
-    public bool? TwoFactorEnabled { get; set; }
+    //public bool? TwoFactorEnabled { get; set; }
 
-    public string? SecurityQuestions { get; set; }
+    //public string? SecurityQuestions { get; set; }
 }

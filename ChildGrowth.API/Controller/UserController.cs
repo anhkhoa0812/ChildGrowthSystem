@@ -45,4 +45,21 @@ public class UserController : BaseController<UserController>
             return Ok(response);
     }
     
+    [HttpGet(ApiEndPointConstant.User.ById)]
+    [CustomAuthorize(RoleEnum.Member, RoleEnum.Admin)]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserById([FromRoute] int id)
+    {
+        var user = await _userService.GetUserByIdAsync(id);
+        return Ok(user);
+    }
+    
+    [HttpPut(ApiEndPointConstant.User.ById)]
+    [CustomAuthorize(RoleEnum.Member, RoleEnum.Admin)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest request)
+    {
+        var result = await _userService.UpdateUserAsync(id, request);
+        return Ok(result);
+    }
 }

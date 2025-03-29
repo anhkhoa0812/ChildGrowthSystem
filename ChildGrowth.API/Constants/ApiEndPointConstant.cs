@@ -48,6 +48,13 @@ public static class ApiEndPointConstant
         public const string UserEndPoint = ApiEndpoint + "/users";
         public const string SignUp = UserEndPoint + "/signup";
         public const string SignIn = UserEndPoint + "/signin";
+        public const string ById = UserEndPoint + "/{id}";
+    }
+
+    public static class UserMembership
+    {
+        public const string UserMembershipEndPoint = ApiEndpoint + "/user-memberships";
+        public const string UserMembershipByIdEndPoint = UserMembershipEndPoint + "/{id}";
     }
     
     public static class MembershipPlan
@@ -63,6 +70,7 @@ public static class ApiEndPointConstant
     {
         public const string PaymentEndPoint = ApiEndpoint + "/payments";
     }
+    
     public static class GrowthRecord
     {
         public const string GrowthRecordEndPoint = ApiEndpoint + "/growth-records";
