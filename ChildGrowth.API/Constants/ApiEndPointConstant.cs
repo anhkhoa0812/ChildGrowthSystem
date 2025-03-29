@@ -92,4 +92,9 @@ public static class ApiEndPointConstant
         public const string Like = BlogEndPoint + "/{blogId}/like";
         public const string Comment = BlogEndPoint + "/{blogId}/comment";
     }
+    
+    public static class Notification
+    {
+        public const string NotificationEndPoint = ApiEndpoint + "/notifications";
+    }
 }
