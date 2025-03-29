@@ -38,6 +38,7 @@ public static class ApiEndPointConstant
         public const string Update = ChildEndPoint + "/{childId}";
         public const string Delete = ChildEndPoint + "/{childId}";
         public const string GrowthRecordChild = ChildEndPoint + "/{childId}/growth-records";
+        public const string GrowthRecordDataChart = ChildEndPoint + "/{childId}/growth-record-data-chart";
         public const string GrowthAlertChild = ChildEndPoint + "/{childId}/growth-alerts";
     }
 

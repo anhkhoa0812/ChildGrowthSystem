@@ -7,6 +7,7 @@ using ChildGrowth.API.Payload.Response.GrowthAlert;
 using ChildGrowth.API.Payload.Response.GrowthRecord;
 using ChildGrowth.API.Services.Interfaces;
 using ChildGrowth.API.Validators;
+using ChildGrowth.Domain.Enum;
 using ChildGrowth.Domain.Paginate;
 using Microsoft.AspNetCore.Mvc;
 
@@ -82,11 +83,23 @@ public class ChildController : BaseController<ChildController>
 
     [HttpGet(ApiEndPointConstant.Child.GrowthRecordChild)]
     [ProducesResponseType(typeof(IPaginate<GrowthRecordResponse>), StatusCodes.Status200OK)]
-    [CustomAuthorize(RoleEnum.Admin, RoleEnum.Member)]
+    // [CustomAuthorize(RoleEnum.Admin, RoleEnum.Member)]
     public async Task<IActionResult> GetGrowthRecordByChildId([FromQuery]int page = 1,[FromQuery] int size = 30,int childId = 0)
     {
         var growthRecords = await _growthRecordService.GetGrowthRecordByChildIdAsync(page, size, childId);
         return Ok(growthRecords);
+    }
+    
+    [HttpGet(ApiEndPointConstant.Child.GrowthRecordDataChart)]
+    [ProducesResponseType(typeof(IPaginate<GrowthRecordResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // [CustomAuthorize(RoleEnum.Admin, RoleEnum.Member)]
+    public async Task<IActionResult> GetGrowthRecordDataChartByChildId(int childId = 0, [FromQuery] EGrowthRecordMode mode = EGrowthRecordMode.Last12Months)
+    {
+        //help me
+        var response = await _growthRecordService.GetGrowthRecordDataChartByChildIdAsync(childId, mode);
+        return Ok(response);
     }
     
     [HttpGet(ApiEndPointConstant.Child.GrowthAlertChild)]

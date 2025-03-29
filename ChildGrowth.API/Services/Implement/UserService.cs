@@ -109,7 +109,7 @@ public class UserService : BaseService<UserService>, IUserService
                 new(ClaimTypes.Name, user.Username),
                 new(ClaimTypes.Role, user.UserType),
             },
-            expires: DateTime.Now.AddMinutes(120),
+            expires: DateTime.Now.AddDays(30),
             signingCredentials: credentials
         );
 

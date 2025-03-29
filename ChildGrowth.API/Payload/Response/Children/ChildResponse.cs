@@ -5,6 +5,7 @@ namespace ChildGrowth.API.Payload.Response.Children;
 
 public class ChildResponse
 {
+    public int ChildId { get; set; }
     public string? FullName { get; set; }
 
     public DateOnly? DateOfBirth { get; set; }
