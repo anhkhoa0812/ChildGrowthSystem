@@ -136,7 +136,7 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         {
             throw new BadHttpRequestException("This consultation is not approved");
         }
-        consultation.Status = EConsultationStatus.SharedData.ToString();
+        consultation.Status = EConsultationStatus.RequestSharedData.ToString();
         consultation.FollowUpDate = DateTime.Now;
         _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
         await _unitOfWork.CommitAsync();
@@ -235,5 +235,21 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
             throw new BadHttpRequestException("Can not find consultation");
         }
         return _mapper.Map<ConsultationResponse>(consultation);
+    }
+
+    public async Task<ConsultationResponse> GetConsultationByIdWithDoctorIdAsync(int consultationId, int doctorId)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.ConsultationId == consultationId && x.DoctorId == doctorId,
+            include: x => x.Include(x => x.Parent)
+                .Include(x => x.Child)
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation or you are not the doctor of this consultation");
+        }
+        
+        var result = _mapper.Map<ConsultationResponse>(consultation);
+        return result;
     }
 }

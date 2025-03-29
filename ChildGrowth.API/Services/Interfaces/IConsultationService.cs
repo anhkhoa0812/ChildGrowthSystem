@@ -26,4 +26,6 @@ public interface IConsultationService
     
     Task<IPaginate<ConsultationResponse>> GetAllPendingConsultations(int page, int size, ConsultationFilter? filter, string? sortBy, bool isAsc);
     Task<ConsultationResponse> GetPendingConsultationByIdAsync(int consultationId);
+    
+    Task<ConsultationResponse> GetConsultationByIdWithDoctorIdAsync(int consultationId, int doctorId);
 }
