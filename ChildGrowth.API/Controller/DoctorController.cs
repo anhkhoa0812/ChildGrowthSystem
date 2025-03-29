@@ -34,6 +34,26 @@ public class DoctorController : BaseController<DoctorController>
         return Ok(consultations);
     }
 
+    [HttpGet(ApiEndPointConstant.Doctor.ConsultationDoctorById)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [CustomAuthorize(RoleEnum.Doctor)]
+    public async Task<IActionResult> GetConsultationById(int id)
+    {
+        try
+        {
+            var doctorId = User.FindFirstValue("userId");
+            var doctorIdInt = int.Parse(doctorId);
+            var result = await _consultationService.GetConsultationByIdWithDoctorIdAsync(id, doctorIdInt);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
     [HttpGet(ApiEndPointConstant.Doctor.GetChildProfile)]
     [ProducesResponseType(typeof(IPaginate<ChildResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetChildProfile(int id)
