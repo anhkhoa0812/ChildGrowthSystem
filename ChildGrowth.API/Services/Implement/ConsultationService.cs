@@ -143,10 +143,10 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         return _mapper.Map<ConsultationResponse>(consultation);
     }
 
-    public async Task<ConsultationResponse> ShareChildGrowthRecordAsync(int parentId, SharedChildGrowthRequest request)
+    public async Task<ConsultationResponse> ShareChildGrowthRecordAsync(int parentId, int consultationId, SharedChildGrowthRequest request)
     {
         var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
-            predicate: x => x.ConsultationId == request.ConsultationId && x.ParentId == parentId,
+            predicate: x => x.ConsultationId == consultationId && x.ParentId == parentId,
             include: x => x.Include(x => x.Parent)
                 .ThenInclude(x => x.Children)
         );
@@ -242,7 +242,6 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
             predicate: x => x.ConsultationId == consultationId && x.DoctorId == doctorId,
             include: x => x.Include(x => x.Parent)
-                .Include(x => x.Child)
         );
         if (consultation == null)
         {
@@ -251,5 +250,59 @@ public class ConsultationService : BaseService<ConsultationService>, IConsultati
         
         var result = _mapper.Map<ConsultationResponse>(consultation);
         return result;
+    }
+
+    public async Task<IPaginate<ConsultationResponse>> GetConsultationsByParentId(int parentId, int page, int size, ConsultationFilter? filter, string? sortBy,
+        bool isAsc)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().GetPagingListAsync(
+            predicate: x => x.ParentId == parentId,
+            page: page,
+            size: size,
+            sortBy: sortBy ?? "FollowUpDate",
+            filter: filter,
+            isAsc: isAsc,
+            include: x => x.Include(x => x.Parent)
+                .Include(x => x.Child)
+        );
+        return _mapper.Map<IPaginate<ConsultationResponse>>(consultation);
+    }
+
+    public async Task<ConsultationResponse> GetConsultationByIdWithParentIdAsync(int consultationId, int parentId)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.ConsultationId == consultationId && x.ParentId == parentId,
+            include: x => x.Include(x => x.Parent)
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation or you are not the parent of this consultation");
+        }
+        
+        var result = _mapper.Map<ConsultationResponse>(consultation);
+        return result;
+    }
+
+    public async Task<ConsultationResponse> FeedbackConsultationsByParent(int consultationId, int parentId, FeedbackConsultationRequest request)
+    {
+        var consultation = await _unitOfWork.GetRepository<Consultation>().SingleOrDefaultAsync(
+            predicate: x => x.ConsultationId == consultationId && x.ParentId == parentId
+        );
+        if (consultation == null)
+        {
+            throw new BadHttpRequestException("Can not find consultation or you are not the parent of this consultation");
+        }
+        if(consultation.Status!.Equals(EConsultationStatus.Completed.ToString()) 
+           && consultation.Rating != null 
+              && !string.IsNullOrEmpty(consultation.Feedback) )
+            throw new BadHttpRequestException("Can not feedback to this consultation");
+        if(request.Rating != 1 && request.Rating != 2 && request.Rating != 3 && request.Rating != 4 && request.Rating != 5)
+            throw new BadHttpRequestException("Rating must be from 1 to 5");
+        consultation.Rating = request.Rating;
+        consultation.Feedback = request.Feedback;
+        consultation.FollowUpDate = DateTime.UtcNow;
+        _unitOfWork.GetRepository<Consultation>().UpdateAsync(consultation);
+        await _unitOfWork.CommitAsync();
+        return _mapper.Map<ConsultationResponse>(consultation);
     }
 }

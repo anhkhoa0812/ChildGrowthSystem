@@ -69,6 +69,14 @@ public class ChildService  : BaseService<Child>, IChildService
         return true;
     }
 
+    public async Task<List<ChildResponse>> GetChildrenByParentIdAsync(int parentId)
+    {
+        var childs = await _unitOfWork.GetRepository<Child>().GetListAsync(
+            predicate: x => x.ParentId == parentId
+        );
+        return _mapper.Map<List<ChildResponse>>(childs);
+    }
+
     public async Task<ChildResponse> GetChildByIdForDoctorAsync(int doctorId, int consultationId)
     {
         var doctor = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
