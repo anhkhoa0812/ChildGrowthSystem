@@ -80,13 +80,13 @@ public class ConsultationController : BaseController<ConsultationController>
     [HttpPatch(ApiEndPointConstant.Consultation.SharedData)]
     [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ShareChildGrowthRecord( SharedChildGrowthRequest request)
+    public async Task<IActionResult> ShareChildGrowthRecord(int id, [FromBody] SharedChildGrowthRequest request)
     {
         var parentId = User.FindFirstValue("userId");
         var parentIdInt = int.Parse(parentId!);
         try
         {
-            var consultation = await _consultationService.ShareChildGrowthRecordAsync(parentIdInt, request);
+            var consultation = await _consultationService.ShareChildGrowthRecordAsync(parentIdInt, id, request);
             return Ok(consultation);
         }
         catch (Exception e)
@@ -133,5 +133,23 @@ public class ConsultationController : BaseController<ConsultationController>
             return BadRequest(e.Message);
         }
     }
-    
+    [HttpPatch(ApiEndPointConstant.Consultation.FeedbackConsultationById)]
+    [CustomAuthorize(RoleEnum.Member)]
+    [ProducesResponseType(typeof(ConsultationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> FeedbackConsultationsByParent(int id, [FromBody] FeedbackConsultationRequest request)
+    {
+        var parentId = User.FindFirstValue("userId");
+        var parentIdInt = int.Parse(parentId);
+        try
+        {
+            var consultation = await _consultationService.FeedbackConsultationsByParent(id, parentIdInt, request);
+            return Ok(consultation);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
 }

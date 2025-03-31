@@ -15,9 +15,10 @@ public static class ApiEndPointConstant
         public const string ConsultationEndpoint = ApiEndpoint + "/consultations";
         public const string ResponseConsultation = ConsultationEndpoint + "/{id}/response";
         public const string FeedbackConsultation = ConsultationEndpoint + "/feedback";
-        public const string SharedData = ConsultationEndpoint + "/shared-data";
+        public const string SharedData = ConsultationEndpoint + "/{id}/shared-data";
         public const string Pending = ConsultationEndpoint + "/pending";
         public const string PendingById = Pending + "/{id}";
+        public const string FeedbackConsultationById = ConsultationEndpoint + "/{id}/feedback";
     }
 
     public static class Doctor
@@ -50,6 +51,9 @@ public static class ApiEndPointConstant
         public const string SignUp = UserEndPoint + "/signup";
         public const string SignIn = UserEndPoint + "/signin";
         public const string ById = UserEndPoint + "/{id}";
+        public const string Consultations = UserEndPoint + "/consultations";
+        public const string ConsultationById = Consultations + "/{id}";
+        public const string Children = UserEndPoint + "/children";
     }
 
     public static class UserMembership
