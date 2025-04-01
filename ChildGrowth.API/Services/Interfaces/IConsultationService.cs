@@ -20,7 +20,7 @@ public interface IConsultationService
     
     Task<ConsultationResponse> RequestChildGrowthRecordAsync(int doctorId, int consultationId);
     
-    Task<ConsultationResponse> ShareChildGrowthRecordAsync(int parentId, SharedChildGrowthRequest request);
+    Task<ConsultationResponse> ShareChildGrowthRecordAsync(int parentId, int consultationId, SharedChildGrowthRequest request);
   
     Task<DoctorDashboardResponse> GetDoctorDashboardAsync(int doctorId, int month);
     
@@ -28,4 +28,10 @@ public interface IConsultationService
     Task<ConsultationResponse> GetPendingConsultationByIdAsync(int consultationId);
     
     Task<ConsultationResponse> GetConsultationByIdWithDoctorIdAsync(int consultationId, int doctorId);
+    
+    Task<IPaginate<ConsultationResponse>> GetConsultationsByParentId(int parentId, int page, int size, ConsultationFilter? filter, string? sortBy, bool isAsc);
+    
+    Task<ConsultationResponse> GetConsultationByIdWithParentIdAsync(int consultationId, int parentId);
+    
+    Task<ConsultationResponse> FeedbackConsultationsByParent(int consultationId, int parentId, FeedbackConsultationRequest request);
 }

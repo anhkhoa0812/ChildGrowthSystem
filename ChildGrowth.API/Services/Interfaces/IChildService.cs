@@ -17,5 +17,7 @@ public interface IChildService
     Task<ChildResponse> UpdateChildAsync(int childId, UpdateChildrenRequest request);
 
     Task<bool> DeleteChildAsync(int childId);
+    
+    Task<List<ChildResponse>> GetChildrenByParentIdAsync(int parentId);
 
 }
